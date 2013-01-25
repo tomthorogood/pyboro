@@ -84,6 +84,8 @@ We give the ParseMap a tuple of tuples, each of which has the following:
 2. A regular expression
 3. Something that tells the parser what to do with the token found
 
+Let's examine the third column:
+
 1. `Lexer.ParseMap.LITERAL` tells the parseMap to store the data found exactly as it is stated.
 2. `Lexer.ParseMap.IGNORE` will discard the information 
 3. `validate_as_integer` is a function that maybe we've already written, which takes in the 
