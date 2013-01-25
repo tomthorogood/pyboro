@@ -71,7 +71,7 @@ a_parser = Lexer.ParseMap((
     ("whitespace"       ,   "[ \t]+",                   Lexer.ParseMap.IGNORE),
     ("identifier"       ,   "[_a-zA-Z][_a-zA-Z0-9]*",   Lexer.ParseMap.LITERAL),
     ("whitespace"       ,   "[ \t]*",                   Lexer.ParseMap.IGNORE),
-    ("assignment_op""   ,   "\=",                       Lexer.ParseMap.IGNORE),
+    ("assignment_op"    ,   "\=",                       Lexer.ParseMap.IGNORE),
     ("assignment"       ,   "[^;]+",                    validate_as_integer),
     ("whitespace"       ,   "[ \t]*",                   Lexer.ParseMap.IGNORE),
     ("statement_end"    ,   ";",                        Lexer.ParseMap.IGNORE)
