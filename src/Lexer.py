@@ -125,8 +125,8 @@ class ParseMap(object):
         handler = table_row[2]
         
         if VERBAL:
-            print("INPUT: %(input)s\n\n\tName: %(name)s\n\tRegex: %(regex)s\n") % {
-                    "input" :   substring,
+            print("INPUT: %(input)s\nMatched Name: %(name)s\nMatched Regex: %(regex)s\n") % {
+                    "input" :   substring.strip(),
                     "regex" :   regex,
                     "name"  :   identifier
             }
@@ -134,7 +134,7 @@ class ParseMap(object):
         # Will be a re object or None, if there is no match
         # we are only going to work with the FIRST match, after which
         # it will be consumed
-        assert(isinstance(substring,str) and substring != "")
+        #assert(isinstance(substring,str) and substring != "")
         result = re.match(regex,substring)
         
         if not result:

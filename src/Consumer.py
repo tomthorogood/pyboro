@@ -5,7 +5,7 @@ from Lexer import ParseMap
 class PyrexSyntaxError(Exception):
     def __init__(self, line, err):
         self.line = line
-        self.err = "Line %s: %s" % (line,err)
+        self.err = "\n\nLine %s: %s" % (line,err)
     def __str__(self):
         return self.err
 
