@@ -49,4 +49,4 @@ with open("test_input.txt") as f:
 
 for result in results:
     if result[1] is PoemDeclaration:
-        print("I've found a poem by %s called \"%s\": %s" % (result[0]["author"],result[0]["title"],result[0]["poem"]))
+        print("I've found a poem by %s called \"%s\":\n %s" % (result[0]["author"],result[0]["title"],result[0]["poem"]))

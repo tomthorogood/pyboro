@@ -10,7 +10,9 @@ own code generation and so on.
 
 No installation required. Just download it and you can use
 
-    from pyrex import Lexer
+    from pyRex import Lexer
+    # or
+    from pyRex import Consumer
 
 
 # Brief Tutorial #
