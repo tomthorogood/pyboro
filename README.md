@@ -8,14 +8,79 @@ own code generation and so on.
 
 # Installation #
 
-No installation required. Just download it and you can use
+No installation required. Just download it and you can use it
+with an import. 
 
-    from pyRex import Lexer
-    # or
-    from pyRex import Consumer
+# The Lexer Module #
+
+The Lexer module (`pyRex.Lexer`) is used to define your symbol
+tables. You'll create `ParseMap` objects for each of the
+regular expressions you want to be able to parse. 
+
+These are set up in the following way:
+
+    my_parser = pyRex.Lexer.ParseMap((
+        ("token name",  "regular expression",   handler),
+            #...
+    ))
+
+In the above, "token name" is a brief title for the regular expression.
+For those that will be ignored, the name is irrevant for functionality,
+but good for people who might have to maintain your code. For tokens that will
+be preserved, the token name is how you will access the matched expression.
+    
+    # `let x = 17;`, where the ParseMap searches for a variable name and an assignment:
+    
+    result = my_parser.parse(input_string)
+    print(result['variable name']) #prints 'x'
+    print(result['assigment']) #prints '17'
 
 
-# Brief Tutorial #
+"regular expression" is the regular expression matches the title.
+
+"handler" is either a function that you create, OR a ParseMap constant.
+
+The ParseMap class has two constants:
+
+    pyRex.Lexer.ParseMap.IGNORE     # consumes the input matching the regex, but does not store it
+    pyRex.Lexer.ParseMap.LITERAL    # consumes and stores the input exactly as its found
+
+If you use the name of a function for the handler, it must take a single string as an argument,
+and output a single string. This allows you to transform or verify inputs further. Note that in python,
+basic types are also functions. This makes it easy to convert the input strings into integers, etc
+
+    ("integer assignment", regex_foo,   int)
+    
+
+For a more in-depth look at the Lexer, read through [the tutorial](#tutorial).
+
+# The Consumer Module #
+
+While the Lexer module is used to set up your symbol tables, the Consumer module is used to actually
+consume input and return result tables.
+
+A Consumer object takes as a single argument a list of ParseMaps:
+
+    my_consumer = Consumer.Consumer([my_parser,my_other_parser,my_third_parser])
+
+Whenever an input string is given to that object, it will iterate over the input, checking against
+each of the ParseMaps in order. It will do this until either a) all of the input is consumed (hooray!)
+or b) a syntax error is found (boo).
+
+It will return the results from each of the ParseMaps, along with a reference to the map that found it. 
+    
+    my_consumer = Consumer.Consumer([EmailAddress, Name, FavoriteColor])
+    
+    results = None
+    with open("input_file.txt") as f: 
+        results = my_consumer.parse(f.read()) #will throw an error if the entire file cannot be parsed cleanly
+    
+    for result in results:
+        if result is EmailAddress:
+            print result["address"]
+
+<a name="tutorial></a>
+# Brief Tutorial of Lexing#
 
 Before you begin using pyrex, you should have an idea how to use
 regular expressions with Python's `re` module. If you need help with
