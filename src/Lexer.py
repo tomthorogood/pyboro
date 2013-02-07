@@ -94,14 +94,10 @@ class ParseMap(object):
             if entry[2] is not ParseMap.IGNORE:
                 self.symbols[entry[0]] = None
         
-        # Make sure that there is exactly one match for the overarching regex
-        all_matches = re.findall(self.regex,input_string)
-
-        if not all_matches:
+        match_result = re.match(self.regex,input_string)
+        if not match_result:
             raise InputMatchError(self.regex,input_string)
-
-        self.parsed_token = re.findall(self.regex,input_string)[0]
-        
+        self.parsed_token = match_result.group() 
         table_index = 0
         str_index = 0
         
@@ -129,11 +125,16 @@ class ParseMap(object):
         handler = table_row[2]
         
         if VERBAL:
-            print("checking substring \"%s\" against regex \"%s\"" % (substring, regex))
+            print("INPUT: %(input)s\n\n\tName: %(name)s\n\tRegex: %(regex)s\n") % {
+                    "input" :   substring,
+                    "regex" :   regex,
+                    "name"  :   identifier
+            }
 
         # Will be a re object or None, if there is no match
         # we are only going to work with the FIRST match, after which
         # it will be consumed
+        assert(isinstance(substring,str) and substring != "")
         result = re.match(regex,substring)
         
         if not result:
@@ -171,63 +172,3 @@ class ParseMap(object):
         if (self.regex != regex):
             raise(RegexMismatchError(self.regex, regex))
 
-if __name__ == "__main__":
-    # Running this program directly will run tests
-    # in verbal mode. You can turn off verbal mode
-    # by using the --quiet flag
-
-    from argparse import ArgumentParser
-    parser = ArgumentParser("Tests the pyRex regular expression lexer utility")
-    parser.add_argument("--quiet", action="store_false", default=True)
-    args = parser.parse_args()
-
-    VERBAL = args.quiet
-    test_regex = "(def)[\t ]+[a-zA-Z_][a-zA-Z0-9_]+[\t ]*:[\t ]*\n"
-
-    # Make sure there's not a problem with the above regular expression
-    # in its most basic form before beginning the tests
-    assert(re.match(test_regex, "def foo:\n"))
-
-    # Set up the parse map
-    regex_table = (
-            ("def"      , "(def)[\t ]+"             , ParseMap.IGNORE),
-            ("func_name", "[a-zA-Z_][a-zA-Z0-9_]+"  , ParseMap.LITERAL),
-            ("endl"     , "[\t ]*:[\t ]*\n"         , ParseMap.IGNORE)
-    )
-    
-    parser = ParseMap(regex_table)
-    parser.assert_match(test_regex)
-    passing_tests = {
-            "def foo:\n"             : "foo", 
-            "def        f2oo:\n"    : "f2oo", 
-            "def foo3 : \n"         : "foo3"
-            }
-
-    failing_tests = ("def 1foo:\n", "def\tfoo:", "def:")
-
-    for test in passing_tests:
-        result = parser.parse(test)
-        if (result["func_name"] != passing_tests[test]): raise Exception
-
-    for test in failing_tests:
-        try:
-            result = parser.parse(test)
-            raise Exception
-        except ParseMapError:
-            continue
-
-    # Run a test against input that must be transformed with a function
-    test_regex = "(sum)[\t ]+[0-9]+[\t ]*(and)[\t ]*[0-9]+"
-    parser = ParseMap((
-        ("sum"  , "(sum)[\t ]+"         , ParseMap.IGNORE),
-        ("int1" , "[0-9]+"              , int),
-        ("and"  , "[\t ]*(and)[\t ]*"   , ParseMap.IGNORE),
-        ("int2" , "[0-9]+"              , int)
-        )
-    )
-    parser.assert_match(test_regex)
-    test_string = "sum 4 and 5"
-    result = parser.parse(test_string)
-    assert( ( result["int1"] + result["int2"]) == 9 )
-
-    print("All tests passed!")

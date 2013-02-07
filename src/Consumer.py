@@ -1,4 +1,5 @@
 import re
+import Lexer
 from Lexer import ParseMap
 
 class PyrexSyntaxError(Exception):
@@ -89,7 +90,7 @@ class Consumer(object):
 
             # Tries each of the parsers pased in against the 
             # next input. 
-            for parser in parse_maps:
+            for parser in self.parse_maps:
                 result = iterator.search(parser)
                 if result:
                     results.append((result,parser))
@@ -101,7 +102,7 @@ class Consumer(object):
                 trunc_input = input_string[iterator.pos:]
                 maxlen = 16 if len(trunc_input) > 16 else len(trunc_input)
 
-                raise PyrexSyntaxError(iterator.line, "Syntax Error near %s" % (input_string[iterator.pos:][:maxlen))
+                raise PyrexSyntaxError(iterator.line, "Syntax Error near %s" % (input_string[iterator.pos:][:maxlen]))
            
             # Set a new benchmark and keep going.
             else:
