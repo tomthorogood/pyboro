@@ -26,6 +26,7 @@ class InputMatchError(ParseMapError):
 
 class MissingTokenError(ParseMapError):
     def __init__(self, missing, input_string, regex):
+        self.missing = missing
         self.value = "Couldn't find matches for unignored tokens: %s, with regex \"%s\" and input \"%s\"" % (missing, regex, input_string)
 
 class RegexMismatchError(ParseMapError):
@@ -94,17 +95,22 @@ class ParseMap(object):
                 self.symbols[entry[0]] = None
         
         # Make sure that there is exactly one match for the overarching regex
-        if (len(re.findall(self.regex,input_string)) != 1):
-            raise InputMatchError(self.regex, input_string)
+        all_matches = re.findall(self.regex,input_string)
+
+        if not all_matches:
+            raise InputMatchError(self.regex,input_string)
+
+        self.parsed_token = re.findall(self.regex,input_string)[0]
         
         table_index = 0
         str_index = 0
         
         while table_index < len(self.regex_table):
-            table_index, str_index = self.consume_input(input_string, table_index,str_index)
+            table_index, str_index = self.consume_input(self.parsed_token, table_index,str_index)
         
         if (None in self.symbols.values()):
             raise MissingTokenError([token for token in self.symbols if self.symbols[token] is None], input_string, self.regex)
+
         return self.symbols
 
 
