@@ -11,7 +11,7 @@
 import re
 from collections import OrderedDict
 
-VERBAL=False
+VERBAL=True
 
 class ParseMapError(Exception):
     def __init__(self):
