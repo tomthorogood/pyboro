@@ -46,7 +46,7 @@ class ParseMap(object):
     # in the corresponding symbol table (self.symbols) 
     LITERAL = 0x1
 
-    def __init__(self, regextable=()):
+    def __init__(self, regextable, strip=False, flags=0):
         """
         regextable is a tuple (or list) that describes the 
         symbol names and the regular expressions to be used,
@@ -73,15 +73,30 @@ class ParseMap(object):
         and returns SOMETHING that can be stored in the symbol table. 
 
         """
+        assert(isinstance(regextable,(list,tuple)))
         self.regex_table = regextable
-
+        self.strip = strip
+        self.flags = flags
         # All matches will be checked against this constructed regex
         # if it doesn't match, it's most likely because there's a problem
         # with how the ParseMap was constructed, rather than the user input
         tmp_list = [entry[1] for entry in regextable]
         self.regex = "".join(tmp_list)
+        self.parsed_token = ""
+        self.input = ""
+        self.raw_length = 0
 
-    def parse(self, input_string):
+    def create_empty_map(self):
+        """
+        Sets the current result map to hold null values
+        for all tokens that will not be ignored.
+        """
+        self.symbols = OrderedDict()
+        for entry in self.regex_table:
+            if entry[2] is not ParseMap.IGNORE:
+                self.symbols[entry[0]] = None
+    
+    def parse(self, input_string) :
         """
         Running the parse method will check the input string against
         this parser's regular expression, making sure that it's a match.
@@ -89,15 +104,28 @@ class ParseMap(object):
         the input and storing the symbols requested.
         The return value will be a map of the stored symbols and their values.
         """
-        self.symbols = OrderedDict()
-        for entry in self.regex_table:
-            if entry[2] is not ParseMap.IGNORE:
-                self.symbols[entry[0]] = None
+        global VERBAL
+        self.input = input_string
+        self.offset = 0
+
+        self.create_empty_map()
         
-        match_result = re.match(self.regex,input_string)
+        # If we have permission, strip down the input string to truncate
+        # any whitespace that will upset the regex
+        if self.strip:
+            input_string = input_string.strip()
+            self.offset = len(self.input) - len(input_string)
+        
+        # Retrieve the first match in the input string of this ParseMap's
+        # regular expression
+        match_result = re.match(self.regex,input_string,self.flags)
+        
         if not match_result:
             raise InputMatchError(self.regex,input_string)
+        
         self.parsed_token = match_result.group() 
+        
+        # Consumer loop setup
         table_index = 0
         str_index = 0
         
@@ -111,10 +139,12 @@ class ParseMap(object):
 
 
     def consume_input(self, input_string, table_index, start_index):
-        global VERBAL # for givine feedback -- does not change
+        global VERBAL # for giving feedback -- does not change
 
         # The bit of text we'll be working with 
         substring = input_string[start_index:]
+        if VERBAL:
+            print("Lexer now consuming ::= %s" % re.escape(substring.strip()))
 
         # The piece of the parse map we'll be working with
         table_row = self.regex_table[table_index]
@@ -124,12 +154,6 @@ class ParseMap(object):
         regex = table_row[1]
         handler = table_row[2]
         
-        if VERBAL:
-            print("INPUT: %(input)s\nMatched Name: %(name)s\nMatched Regex: %(regex)s\n") % {
-                    "input" :   substring.strip(),
-                    "regex" :   regex,
-                    "name"  :   identifier
-            }
 
         # Will be a re object or None, if there is no match
         # we are only going to work with the FIRST match, after which
@@ -141,6 +165,13 @@ class ParseMap(object):
             raise NoMatchError(regex, substring)
         
         match = result.group()
+        
+        if VERBAL:
+            print("INPUT: %(input)s\nMatched Name: %(name)s\nMatched Regex: %(regex)s\n") % {
+                    "input" :   match.strip(),
+                    "regex" :   regex,
+                    "name"  :   identifier
+            }
 
         # If we're storing it literally, then we simply do so
         if handler is ParseMap.LITERAL:

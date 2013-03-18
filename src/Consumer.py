@@ -2,12 +2,17 @@ import re
 import Lexer
 from Lexer import ParseMap
 
+VERBAL = False
+
 class PyrexSyntaxError(Exception):
-    def __init__(self, line, err):
-        self.line = line
-        self.err = "\n\nLine %s: %s" % (line,err)
+    def __init__(self, inputstr, expecting):
+        self.input = re.escape(inputstr)
+        self.expecting = expecting
+
     def __str__(self):
-        return self.err
+        message = "SyntaxError near %(input)s\nExpecting: %(expecting)s\n" % (self.__dict__)
+        return message
+
 
 class ConsumerIterator(object):
     """
@@ -19,7 +24,7 @@ class ConsumerIterator(object):
     def __init__(self, input_str):
         self.string = input_str
         self.pos = 0
-        self.line = 0
+        self.newlines = input_str.count("\n")
 
     def __len__(self):
         """
@@ -43,8 +48,7 @@ class ConsumerIterator(object):
         try:
             prev_pos = self.pos
             result = parser.parse(self.string[self.pos:])
-            self.pos += len(parser.parsed_token)
-            self.line += self.string[prev_pos:self.pos].count("\n")
+            self.pos += len(parser.parsed_token) + parser.offset
             
         except Lexer.ParseMapError:
             # If the expression does not match, we'll let the caller
@@ -62,10 +66,13 @@ class Consumer(object):
     a) a PyrexSyntaxError is thrown, or b) the end of the input
     is reached.
     """
-    def __init__(self, parse_maps=[]):
+    def __init__(self, parse_maps, help="valid syntax"):
+        assert(isinstance,parse_maps,(list,tuple))
         for e in parse_maps:
             assert(isinstance(e,ParseMap))
         self.parse_maps = parse_maps
+        self.num_lines = 0
+        self.help = help
 
 
     def parse(self, input_string):
@@ -81,6 +88,7 @@ class Consumer(object):
         
         iterator = ConsumerIterator(input_string)
         results = []
+        self.num_lines += iterator.newlines
 
         # This loop runs as long as there is input
         # left in the iterator.
@@ -102,7 +110,7 @@ class Consumer(object):
                 trunc_input = input_string[iterator.pos:]
                 maxlen = 16 if len(trunc_input) > 16 else len(trunc_input)
 
-                raise PyrexSyntaxError(iterator.line, "Syntax Error near %s" % (input_string[iterator.pos:][:maxlen]))
+                raise PyrexSyntaxError((input_string[iterator.pos:][:maxlen]), self.help)
            
             # Set a new benchmark and keep going.
             else:
