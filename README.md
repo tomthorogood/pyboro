@@ -13,8 +13,14 @@ already existing in PyPi.
 
 # Installation #
 
-No installation required. Just download it and you can use it
-with an import. 
+    pip install pyboro
+    easy_install pyboro
+
+Then:
+    import pyboro
+Or:
+    from pyboro import Lexer
+    from pyboro import Consumer
 
 # The Lexer Module #
 
