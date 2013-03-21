@@ -1,7 +1,13 @@
-test:
-	cp tests/* .
-	python lexicon.py
+register: docs
+	python setup.py sdist bdist egg register upload
+
+docs:
+	cp README.md docs/
+	cd docs && $(MAKE) all
+	cd docs && $(MAKE) clean
 
 clean:
-	rm lexicon.py
-	rm test_input.txt
+	rm -rf pyRex.egg-info
+	rm -rf dist/
+	rm -rf build/
+
