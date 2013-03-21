@@ -1,5 +1,5 @@
 register: docs
-	python setup.py sdist bdist egg register upload
+	python setup.py sdist bdist_egg register upload
 
 docs:
 	cp README.md docs/

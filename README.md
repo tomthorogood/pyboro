@@ -1,10 +1,15 @@
-# What is pyRex? #
+# What is pyboro? #
 
-pyRex is a regular expression lexer built with python.
+pyboro is a regular expression lexer built with python.
 
-pyRex is suitable for parsing syntax and building symbol tables,
+pyboro is suitable for parsing syntax and building symbol tables,
 and it's easy to use this information to extend into building your
 own code generation and so on.
+
+The name comes from 'borosilicate', which is the type of glass used
+in making [Pyrex](http://en.wikipedia.org/wiki/Pyrex) glassware. The repository
+was originally called pyRex, but this conflicted with similarly named packages 
+already existing in PyPi.
 
 # Installation #
 
@@ -13,13 +18,13 @@ with an import.
 
 # The Lexer Module #
 
-The Lexer module (`pyRex.Lexer`) is used to define your symbol
+The Lexer module (`pyboro.Lexer`) is used to define your symbol
 tables. You'll create `ParseMap` objects for each of the
 regular expressions you want to be able to parse. 
 
 These are set up in the following way:
 
-    my_parser = pyRex.Lexer.ParseMap((
+    my_parser = pyboro.Lexer.ParseMap((
         ("token name",  "regular expression",   handler),
             #...
     ))
@@ -42,8 +47,8 @@ be preserved, the token name is how you will access the matched expression.
 
 The ParseMap class has two constants:
 
-    pyRex.Lexer.ParseMap.IGNORE     # consumes the input matching the regex, but does not store it
-    pyRex.Lexer.ParseMap.LITERAL    # consumes and stores the input exactly as its found
+    pyboro.Lexer.ParseMap.IGNORE     # consumes the input matching the regex, but does not store it
+    pyboro.Lexer.ParseMap.LITERAL    # consumes and stores the input exactly as its found
 
 If you use the name of a function for the handler, it must take a single string as an argument,
 and output a single string. This allows you to transform or verify inputs further. Note that in python,
@@ -79,10 +84,10 @@ It will return the results from each of the ParseMaps, along with a reference to
         if result is EmailAddress:
             print result["address"]
 
-<a name="tutorial></a>
+<a name="tutorial"></a>
 # Brief Tutorial of Lexing#
 
-Before you begin using pyrex, you should have an idea how to use
+Before you begin using pyboro, you should have an idea how to use
 regular expressions with Python's `re` module. If you need help with
 this, check out the [official documentation](http://docs.python.org/library/re.html).
 
