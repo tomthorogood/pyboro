@@ -82,8 +82,7 @@ class Consumer(object):
         and returns a list of token results, along with the parser
         that matched them.
         """
-
-        if not isinstance(input_string,str):
+        if not isinstance(input_string,(str,unicode)):
             raise TypeError("Expected string, %s found" % repr(type(input_string)))
         
         iterator = ConsumerIterator(input_string)
@@ -108,7 +107,7 @@ class Consumer(object):
             # there's a problem with the next token of the input.
             if iterator.pos == current_position:
                 trunc_input = input_string[iterator.pos:]
-                maxlen = 16 if len(trunc_input) > 16 else len(trunc_input)
+                maxlen = 80 if len(trunc_input) > 80 else len(trunc_input)
 
                 raise PyrexSyntaxError((input_string[iterator.pos:][:maxlen]), self.help)
            
