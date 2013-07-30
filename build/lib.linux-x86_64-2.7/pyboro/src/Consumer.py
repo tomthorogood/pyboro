@@ -84,7 +84,7 @@ class Consumer(object):
         """
 
         if not isinstance(input_string,str):
-            raise TypeError("Expected string, %s found" % repr(type(input_string)))
+            raise TypeError("Expected string, %s found" % repr(type(input_sring)))
         
         iterator = ConsumerIterator(input_string)
         results = []

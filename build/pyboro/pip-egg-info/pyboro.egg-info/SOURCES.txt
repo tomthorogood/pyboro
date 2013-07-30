@@ -1,0 +1,12 @@
+MANIFEST.in
+README.md
+setup.cfg
+pip-egg-info/pyboro.egg-info/PKG-INFO
+pip-egg-info/pyboro.egg-info/SOURCES.txt
+pip-egg-info/pyboro.egg-info/dependency_links.txt
+pip-egg-info/pyboro.egg-info/top_level.txt
+pip-egg-info/pyboro.egg-info/zip-safe
+pyboro/__init__.py
+pyboro/src/Consumer.py
+pyboro/src/Lexer.py
+pyboro/src/__init__.py
