@@ -6,7 +6,7 @@ with open("README.md") as readme_md:
 
 setup(
         name = "pyboro",
-        version = "0.2.0c",
+        version = "0.3.0",
         description = "pyboro is a utility for lexing and consuming input by setting up regular expression tables and building syntax maps.",
         long_description = readme,
         author = "Tom A. Thorogood",

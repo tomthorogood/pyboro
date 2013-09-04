@@ -66,13 +66,14 @@ class Consumer(object):
     a) a PyrexSyntaxError is thrown, or b) the end of the input
     is reached.
     """
-    def __init__(self, parse_maps, help="valid syntax"):
+    def __init__(self, parse_maps, help="valid syntax", formatting_func=lambda s: s):
         assert(isinstance,parse_maps,(list,tuple))
         for e in parse_maps:
             assert(isinstance(e,ParseMap))
         self.parse_maps = parse_maps
         self.num_lines = 0
         self.help = help
+        self.error_formatting = formatting_func
 
 
     def parse(self, input_string):
@@ -107,9 +108,8 @@ class Consumer(object):
             # there's a problem with the next token of the input.
             if iterator.pos == current_position:
                 trunc_input = input_string[iterator.pos:]
-                maxlen = 80 if len(trunc_input) > 80 else len(trunc_input)
-
-                raise PyrexSyntaxError((input_string[iterator.pos:][:maxlen]), self.help)
+                err_txt = self.error_formatting(trunc_input)
+                raise PyrexSyntaxError(err_text, self.help)
            
             # Set a new benchmark and keep going.
             else:

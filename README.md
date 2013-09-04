@@ -70,7 +70,7 @@ For a more in-depth look at the Lexer, read through [the tutorial](#tutorial).
 While the Lexer module is used to set up your symbol tables, the Consumer module is used to actually
 consume input and return result tables.
 
-A Consumer object takes as a single argument a list of ParseMaps:
+A Consumer object requires  a single argument a list of ParseMaps:
 
     my_consumer = Consumer.Consumer([my_parser,my_other_parser,my_third_parser])
 
@@ -89,6 +89,18 @@ It will return the results from each of the ParseMaps, along with a reference to
     for result in results:
         if result is EmailAddress:
             print result["address"]
+
+Optional arguments to the conumser module:
+
+    help: A text to be displayed if an error is found
+    formatting_func: a function which takes input, formats it, and returns it.
+
+This will produce helpful error messages like:
+
+"Syntax error near 'dafsdfdfdjfkdljkj 12;', expecting valid type."
+
+where 'dafsdfdfdjfkdljkj 12;' is the output of formatting\_func, and 
+"valid type" is the help message.
 
 <a name="tutorial"></a>
 # Brief Tutorial of Lexing#
