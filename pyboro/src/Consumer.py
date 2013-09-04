@@ -67,9 +67,9 @@ class Consumer(object):
     is reached.
     """
     def __init__(self, parse_maps, help="valid syntax", formatting_func=lambda s: s):
-        assert(isinstance,parse_maps,(list,tuple))
+        assert isinstance,parse_maps(list,tuple)
         for e in parse_maps:
-            assert(isinstance(e,ParseMap))
+            assert isinstance(e,ParseMap)
         self.parse_maps = parse_maps
         self.num_lines = 0
         self.help = help
