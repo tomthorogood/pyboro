@@ -4,7 +4,7 @@ from Lexer import ParseMap
 
 VERBAL = False
 
-class PyrexSyntaxError(Exception):
+class PyBoroSyntaxError(Exception):
     def __init__(self, inputstr, expecting):
         self.input = re.escape(inputstr)
         self.expecting = expecting
@@ -63,7 +63,7 @@ class Consumer(object):
     If it finds input it can't consume, it stops, and 
     throws a SyntaxError. A list of valid ParseMaps given to
     the consumer upon instantiation will be tested until either
-    a) a PyrexSyntaxError is thrown, or b) the end of the input
+    a) a PyBoroSyntaxError is thrown, or b) the end of the input
     is reached.
     """
     def __init__(self, parse_maps, help="valid syntax", formatting_func=lambda s: s):
@@ -109,7 +109,7 @@ class Consumer(object):
             if iterator.pos == current_position:
                 trunc_input = input_string[iterator.pos:]
                 err_txt = self.error_formatting(trunc_input)
-                raise PyrexSyntaxError(err_text, self.help)
+                raise PyBoroSyntaxError(err_text, self.help)
            
             # Set a new benchmark and keep going.
             else:
