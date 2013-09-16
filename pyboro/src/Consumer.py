@@ -109,7 +109,7 @@ class Consumer(object):
             if iterator.pos == current_position:
                 trunc_input = input_string[iterator.pos:]
                 err_txt = self.error_formatting(trunc_input)
-                raise PyBoroSyntaxError(err_text, self.help)
+                raise PyBoroSyntaxError(err_txt, self.help)
            
             # Set a new benchmark and keep going.
             else:
